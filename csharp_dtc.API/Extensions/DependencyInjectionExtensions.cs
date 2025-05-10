@@ -1,4 +1,5 @@
-﻿using csharp_dtc.API.OrderDbContextModels;
+﻿using csharp_dtc.API.Configurations;
+using csharp_dtc.API.OrderDbContextModels;
 using csharp_dtc.API.OrderDetailDbContextModels;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,7 @@ namespace csharp_dtc.API.Extensions
             builder.Services.AddScoped<csharp_dtc.API.OrderPersistence.Wrapper.IUnitOfWork, csharp_dtc.API.OrderPersistence.Wrapper.UnitOfWork>();
             builder.Services.AddScoped<csharp_dtc.API.OrderDetailPersistence.Wrapper.IUnitOfWork, csharp_dtc.API.OrderDetailPersistence.Wrapper.UnitOfWork>();
             builder.Services.AddHealthChecks();
+            builder.Services.Configure<AppSetting>(builder.Configuration);
 
             return services;
         }

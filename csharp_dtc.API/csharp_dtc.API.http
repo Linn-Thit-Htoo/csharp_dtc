@@ -1,0 +1,6 @@
+@csharp_dtc.API_HostAddress = http://localhost:5057
+
+GET {{csharp_dtc.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

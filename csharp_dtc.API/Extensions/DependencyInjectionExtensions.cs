@@ -2,6 +2,7 @@
 using csharp_dtc.API.OrderDbContextModels;
 using csharp_dtc.API.OrderDetailDbContextModels;
 using Microsoft.EntityFrameworkCore;
+using System.Transactions;
 
 namespace csharp_dtc.API.Extensions
 {
@@ -12,6 +13,8 @@ namespace csharp_dtc.API.Extensions
             builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables();
+
+            TransactionManager.ImplicitDistributedTransactions = true;
 
             builder.Services.AddControllers().AddJsonOptions(opt =>
             {

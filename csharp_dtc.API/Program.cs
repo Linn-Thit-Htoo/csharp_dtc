@@ -4,7 +4,6 @@ using System.Transactions;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDependencies(builder);
-TransactionManager.ImplicitDistributedTransactions = true;
 
 var app = builder.Build();
 

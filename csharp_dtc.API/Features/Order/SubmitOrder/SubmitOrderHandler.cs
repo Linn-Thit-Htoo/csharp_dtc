@@ -1,23 +1,30 @@
-﻿using csharp_dtc.API.OrderDbContextModels;
+﻿using System.Transactions;
+using csharp_dtc.API.OrderDbContextModels;
 using csharp_dtc.API.OrderDetailDbContextModels;
 using csharp_dtc.API.Utils;
 using MediatR;
-using System.Transactions;
 
 namespace csharp_dtc.API.Features.Order.SubmitOrder;
 
-public class SubmitOrderHandler : IRequestHandler<SubmitOrderRequest, BaseResponse<SubmitOrderResponse>>
+public class SubmitOrderHandler
+    : IRequestHandler<SubmitOrderRequest, BaseResponse<SubmitOrderResponse>>
 {
     private readonly csharp_dtc.API.OrderDetailPersistence.Wrapper.IUnitOfWork _orderDetailUnitOfWork;
     private readonly csharp_dtc.API.OrderPersistence.Wrapper.IUnitOfWork _orderUnitOfWork;
 
-    public SubmitOrderHandler(OrderDetailPersistence.Wrapper.IUnitOfWork orderDetailUnitOfWork, OrderPersistence.Wrapper.IUnitOfWork orderUnitOfWork)
+    public SubmitOrderHandler(
+        OrderDetailPersistence.Wrapper.IUnitOfWork orderDetailUnitOfWork,
+        OrderPersistence.Wrapper.IUnitOfWork orderUnitOfWork
+    )
     {
         _orderDetailUnitOfWork = orderDetailUnitOfWork;
         _orderUnitOfWork = orderUnitOfWork;
     }
 
-    public async Task<BaseResponse<SubmitOrderResponse>> Handle(SubmitOrderRequest request, CancellationToken cancellationToken)
+    public async Task<BaseResponse<SubmitOrderResponse>> Handle(
+        SubmitOrderRequest request,
+        CancellationToken cancellationToken
+    )
     {
         BaseResponse<SubmitOrderResponse> result;
         using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
@@ -29,7 +36,7 @@ public class SubmitOrderHandler : IRequestHandler<SubmitOrderRequest, BaseRespon
                 CreatedAt = DateTime.Now,
                 GrandTotal = request.GrandTotal,
                 InvoiceNo = $"INV-{DateTime.Now:yyyyMMddHHmmss}",
-                IsDeleted = false
+                IsDeleted = false,
             };
 
             await _orderUnitOfWork.OrderRepository.AddAsync(order, cancellationToken);
@@ -50,7 +57,10 @@ public class SubmitOrderHandler : IRequestHandler<SubmitOrderRequest, BaseRespon
                         SubTotal = item.SubTotal,
                     };
 
-                    await _orderDetailUnitOfWork.OrderDetailRepository.AddAsync(orderDetail, cancellationToken);
+                    await _orderDetailUnitOfWork.OrderDetailRepository.AddAsync(
+                        orderDetail,
+                        cancellationToken
+                    );
                     await _orderDetailUnitOfWork.SaveChangesAsync(cancellationToken);
                 }
             }

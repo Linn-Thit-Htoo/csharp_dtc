@@ -1,6 +1,5 @@
 ﻿using csharp_dtc.API.OrderDbContextModels;
 using csharp_dtc.API.OrderDetailDbContextModels;
-using csharp_dtc.API.OrderDetailPersistence.Wrapper;
 using csharp_dtc.API.Utils;
 using MediatR;
 using MediatR.Wrappers;

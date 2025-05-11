@@ -1,7 +1,6 @@
 ﻿using csharp_dtc.API.Features.Core;
 using csharp_dtc.API.Features.Order.SubmitOrder;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace csharp_dtc.API.Features.Order.Core;

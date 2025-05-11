@@ -1,6 +1,5 @@
-﻿namespace csharp_dtc.API.Features.Order.SubmitOrder
+﻿namespace csharp_dtc.API.Features.Order.SubmitOrder;
+
+public class SubmitOrderResponse
 {
-    public class SubmitOrderResponse
-    {
-    }
 }

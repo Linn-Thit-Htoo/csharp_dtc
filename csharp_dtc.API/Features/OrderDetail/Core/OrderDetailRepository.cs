@@ -6,7 +6,6 @@ namespace csharp_dtc.API.Features.OrderDetail.Core;
 
 public class OrderDetailRepository : RepositoryBase<TblOrderDetail>, IOrderDetailRepository
 {
-    public OrderDetailRepository(DbContext context) : base(context)
-    {
-    }
+    public OrderDetailRepository(DbContext context)
+        : base(context) { }
 }

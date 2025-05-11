@@ -2,7 +2,6 @@
 using csharp_dtc.API.OrderDetailDbContextModels;
 using csharp_dtc.API.Utils;
 using MediatR;
-using MediatR.Wrappers;
 using System.Transactions;
 
 namespace csharp_dtc.API.Features.Order.SubmitOrder;

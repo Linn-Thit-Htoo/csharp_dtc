@@ -6,67 +6,66 @@ using MediatR;
 using MediatR.Wrappers;
 using System.Transactions;
 
-namespace csharp_dtc.API.Features.Order.SubmitOrder
+namespace csharp_dtc.API.Features.Order.SubmitOrder;
+
+public class SubmitOrderHandler : IRequestHandler<SubmitOrderRequest, BaseResponse<SubmitOrderResponse>>
 {
-    public class SubmitOrderHandler : IRequestHandler<SubmitOrderRequest, BaseResponse<SubmitOrderResponse>>
+    private readonly csharp_dtc.API.OrderDetailPersistence.Wrapper.IUnitOfWork _orderDetailUnitOfWork;
+    private readonly csharp_dtc.API.OrderPersistence.Wrapper.IUnitOfWork _orderUnitOfWork;
+
+    public SubmitOrderHandler(OrderDetailPersistence.Wrapper.IUnitOfWork orderDetailUnitOfWork, OrderPersistence.Wrapper.IUnitOfWork orderUnitOfWork)
     {
-        private readonly csharp_dtc.API.OrderDetailPersistence.Wrapper.IUnitOfWork _orderDetailUnitOfWork;
-        private readonly csharp_dtc.API.OrderPersistence.Wrapper.IUnitOfWork _orderUnitOfWork;
+        _orderDetailUnitOfWork = orderDetailUnitOfWork;
+        _orderUnitOfWork = orderUnitOfWork;
+    }
 
-        public SubmitOrderHandler(OrderDetailPersistence.Wrapper.IUnitOfWork orderDetailUnitOfWork, OrderPersistence.Wrapper.IUnitOfWork orderUnitOfWork)
+    public async Task<BaseResponse<SubmitOrderResponse>> Handle(SubmitOrderRequest request, CancellationToken cancellationToken)
+    {
+        BaseResponse<SubmitOrderResponse> result;
+        using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
+        try
         {
-            _orderDetailUnitOfWork = orderDetailUnitOfWork;
-            _orderUnitOfWork = orderUnitOfWork;
-        }
-
-        public async Task<BaseResponse<SubmitOrderResponse>> Handle(SubmitOrderRequest request, CancellationToken cancellationToken)
-        {
-            BaseResponse<SubmitOrderResponse> result;
-            using var transactionScope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled);
-            try
+            TblOrder order = new()
             {
-                TblOrder order = new()
-                {
-                    OrderId = Ulid.NewUlid().ToString(),
-                    CreatedAt = DateTime.Now,
-                    GrandTotal = request.GrandTotal,
-                    InvoiceNo = $"INV-{DateTime.Now:yyyyMMddHHmmss}",
-                    IsDeleted = false
-                };
+                OrderId = Ulid.NewUlid().ToString(),
+                CreatedAt = DateTime.Now,
+                GrandTotal = request.GrandTotal,
+                InvoiceNo = $"INV-{DateTime.Now:yyyyMMddHHmmss}",
+                IsDeleted = false
+            };
 
-                await _orderUnitOfWork.OrderRepository.AddAsync(order, cancellationToken);
-                await _orderUnitOfWork.SaveChangesAsync(cancellationToken);
+            await _orderUnitOfWork.OrderRepository.AddAsync(order, cancellationToken);
+            await _orderUnitOfWork.SaveChangesAsync(cancellationToken);
 
-                if (request.OrderDetail is not null && request.OrderDetail.Count > 0)
+            if (request.OrderDetail is not null && request.OrderDetail.Count > 0)
+            {
+                foreach (var item in request.OrderDetail)
                 {
-                    foreach (var item in request.OrderDetail)
+                    TblOrderDetail orderDetail = new()
                     {
-                        TblOrderDetail orderDetail = new()
-                        {
-                            Id = Ulid.NewUlid().ToString(),
-                            CreatedAt = DateTime.Now,
-                            InvoiceNo = order.InvoiceNo,
-                            Price = item.Price,
-                            ProductName = item.ProductName,
-                            Quantity = item.Quantity,
-                            SubTotal = item.SubTotal,
-                        };
+                        Id = Ulid.NewUlid().ToString(),
+                        CreatedAt = DateTime.Now,
+                        InvoiceNo = order.InvoiceNo,
+                        Price = item.Price,
+                        ProductName = item.ProductName,
+                        Quantity = item.Quantity,
+                        SubTotal = item.SubTotal,
+                    };
 
-                        await _orderDetailUnitOfWork.OrderDetailRepository.AddAsync(orderDetail, cancellationToken);
-                        await _orderDetailUnitOfWork.SaveChangesAsync(cancellationToken);
-                    }
+                    await _orderDetailUnitOfWork.OrderDetailRepository.AddAsync(orderDetail, cancellationToken);
+                    await _orderDetailUnitOfWork.SaveChangesAsync(cancellationToken);
                 }
-
-                transactionScope.Complete();
-                result = BaseResponse<SubmitOrderResponse>.Success();
-            }
-            catch (Exception ex)
-            {
-                result = BaseResponse<SubmitOrderResponse>.Fail(ex);
             }
 
-        result:
-            return result;
+            transactionScope.Complete();
+            result = BaseResponse<SubmitOrderResponse>.Success();
         }
+        catch (Exception ex)
+        {
+            result = BaseResponse<SubmitOrderResponse>.Fail(ex);
+        }
+
+    result:
+        return result;
     }
 }

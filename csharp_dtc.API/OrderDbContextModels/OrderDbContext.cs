@@ -7,9 +7,7 @@ namespace csharp_dtc.API.OrderDbContextModels;
 public partial class OrderDbContext : DbContext
 {
     public OrderDbContext(DbContextOptions<OrderDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     public virtual DbSet<TblOrder> TblOrders { get; set; }
 

@@ -1,7 +1,7 @@
-﻿using csharp_dtc.API.Features.OrderDetail.Core;
+﻿using System.Reflection;
+using csharp_dtc.API.Features.OrderDetail.Core;
 using csharp_dtc.API.OrderDetailDbContextModels;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection;
 
 namespace csharp_dtc.API.OrderDetailPersistence.Wrapper;
 

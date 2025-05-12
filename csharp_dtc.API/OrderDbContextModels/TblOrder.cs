@@ -1,5 +1,4 @@
-﻿
-namespace csharp_dtc.API.OrderDbContextModels;
+﻿namespace csharp_dtc.API.OrderDbContextModels;
 
 public partial class TblOrder
 {

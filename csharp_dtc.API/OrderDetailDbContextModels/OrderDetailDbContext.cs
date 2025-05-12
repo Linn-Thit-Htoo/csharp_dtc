@@ -5,9 +5,7 @@ namespace csharp_dtc.API.OrderDetailDbContextModels;
 public partial class OrderDetailDbContext : DbContext
 {
     public OrderDetailDbContext(DbContextOptions<OrderDetailDbContext> options)
-        : base(options)
-    {
-    }
+        : base(options) { }
 
     public virtual DbSet<TblOrderDetail> TblOrderDetails { get; set; }
 

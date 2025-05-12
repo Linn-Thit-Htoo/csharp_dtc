@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿
 namespace csharp_dtc.API.OrderDetailDbContextModels;
 
 public partial class TblOrderDetail

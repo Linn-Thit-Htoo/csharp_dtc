@@ -1,5 +1,4 @@
 using csharp_dtc.API.Extensions;
-using System.Transactions;
 
 var builder = WebApplication.CreateBuilder(args);
 
